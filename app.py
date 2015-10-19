@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
+
+app.secret_key = "lotion in the basket"
 
 
 @app.route('/')
@@ -19,8 +21,15 @@ def login():
          if request.form['username'] != 'admin' or request.form['password'] != 'admin':
              error = 'Invalid credentials. Please try again.'
          else:
-          return redirect(url_for('home'))
+            session['logged_in'] = True
+            flash ("You were just logged_in")
+            return redirect(url_for('home'))
      return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('welcome'))
 
 
 if __name__ == '__main__':
